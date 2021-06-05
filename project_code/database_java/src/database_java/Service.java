@@ -39,12 +39,12 @@ public class Service {
 		Scanner scan = new Scanner(System.in);
 		String userID = null;
 
-		System.out.format("userID ÀÔ·Â : ");
+		System.out.format("userID ï¿½Ô·ï¿½ : ");
 		userID = scan.next();
 		scan.nextLine();
 
 		this.user = new User(new String(userID));
-		System.out.format("%s´Ô È¯¿µÇÕ´Ï´Ù!\n\n", user.getUserID());
+		System.out.format("%sï¿½ï¿½ È¯ï¿½ï¿½ï¿½Õ´Ï´ï¿½!\n\n", user.getUserID());
 		// crate table or read table
 		try {
 			conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/postgres", "postgres", "0000");
@@ -221,7 +221,7 @@ public class Service {
 		try {
 
 			if (!checkCategory(categoryID)) {
-				throw new InputMismatchException("¾ø´Â Ä«Å×°í¸®");
+				throw new InputMismatchException("ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½×°ï¿½");
 			}
 
 			if (orderbyStar) {
@@ -264,7 +264,7 @@ public class Service {
 		try {
 			cityID = checkCity(city);
 			if (cityID == -1) {
-				throw new InputMismatchException("¾ø´Â µµ½Ã.");
+				throw new InputMismatchException("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.");
 			}
 
 			if (orderbyStar) {
@@ -306,11 +306,11 @@ public class Service {
 		try {
 			cityID = checkCity(city);
 			if (cityID == -1) {
-				throw new InputMismatchException("¾ø´Â µµ½Ã.");
+				throw new InputMismatchException("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.");
 			}
 
 			if (!checkCategory(categoryID)) {
-				throw new InputMismatchException("¾ø´Â Ä«Å×°í¸®");
+				throw new InputMismatchException("ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½×°ï¿½");
 			}
 
 			if (orderbyStar) {
@@ -364,11 +364,11 @@ public class Service {
 		  try {
 		  
 		  srcCityID = checkCity(srcCity); if(srcCityID==-1) { throw new
-		  InputMismatchException("Ãâ¹ß µµ½Ã°¡ ¾ø´Â µµ½ÃÀÔ´Ï´Ù.") ; }
+		  InputMismatchException("ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.") ; }
 		  
 		  
 		  dstCityID = checkCity(dstCity); if(dstCityID==-1) { throw new
-		  InputMismatchException("µµÂø µµ½Ã°¡ ¾ø´Â µµ½ÃÀÔ´Ï´Ù.") ; }
+		  InputMismatchException("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½.") ; }
 		  
 		  ret = st.executeQuery("select latitude, longitude from city where cityid=" +dstCityID+" or cityid="+srcCityID+";");
 			int j = 0;
@@ -423,17 +423,18 @@ public class Service {
 					+ ") as S natural join placeLocation;";
 			st.execute(q);
 			
-					
-			for(courseCriteriaObj item:courseCriteria) {
-					cate = item.categoryID;
-					cnum = item.num;
-					
-					ret = st.executeQuery("select category, placename, number, address, star from course where categoryid = '"+cate+"'"
-							+ "order by star LIMIT " +cnum +";");
-					retMeta = ret.getMetaData();
-					printTable(ret, retMeta);
-					
-			}
+					for (int x =0; x<5;x++) {						
+						for(courseCriteriaObj item:courseCriteria) {
+							cate = item.categoryID;
+							cnum = item.num;
+							
+							ret = st.executeQuery("select category, placename, number, address, star from course where categoryid = '"+cate+"'"
+									+ "order by star LIMIT " +cnum * (i+1) +"offset"+ cnum * i +";");
+							retMeta = ret.getMetaData();
+							printTable(ret, retMeta);
+							
+						}
+					}
 				
 				
 
@@ -453,13 +454,13 @@ public class Service {
 		int placeID = 0;
 		try {
 			if (star < 0 || star > 5) {
-				throw new InputMismatchException("1~5Á¡ »çÀÌ ÀÔ·Â!");
+				throw new InputMismatchException("1~5ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½!");
 			}
 			ret = st.executeQuery("select count(*) from city where city='" + city + "';");
 			while (ret.next()) {
 				int tmp = Integer.parseInt(ret.getString(1));
 				if (tmp == 0) {
-					throw new InputMismatchException("¾ø´Â µµ½Ã.");
+					throw new InputMismatchException("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.");
 				}
 				ret = st.executeQuery("select cityID from city where city='" + city + "';");
 				ret.next();
@@ -471,7 +472,7 @@ public class Service {
 			while (ret.next()) {
 				int tmp = Integer.parseInt(ret.getString(1));
 				if (tmp == 0) {
-					throw new InputMismatchException("¾ø´Â °ü±¤Áö");
+					throw new InputMismatchException("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 				}
 
 				ret = st.executeQuery(
@@ -552,13 +553,13 @@ public class Service {
 		while (true) {
 			while (true) {
 				System.out.format(
-						"1.Ä«Å×°í¸®º° °ü±¤Áö Á¶È¸\n2.µµ½Ãº° °ü±¤Áö Á¶È¸\n3.Ä«Å×°í¸® ¹× µµ½Ãº° °ü±¤Áö Á¶È¸\n4.µÎ µµ½Ã ÀÌµ¿ °£ÀÇ ÃßÃµ °ü±¤Áö\n5.ÈÄ±â ³²±â±â\n0.Á¾·á\n");
+						"1.Ä«ï¿½×°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¸\n2.ï¿½ï¿½ï¿½Ãºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¸\n3.Ä«ï¿½×°ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ãºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¸\n4.ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ãµ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n5.ï¿½Ä±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½\n0.ï¿½ï¿½ï¿½ï¿½\n");
 				try {
-					System.out.format("ÀÔ·Â : ");
+					System.out.format("ï¿½Ô·ï¿½ : ");
 					flag = scan.nextInt();
 					scan.nextLine();
 					if (flag < 0 || flag > 5) {
-						throw new InputMismatchException("¿Ã¹Ù¸¥ °ªÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+						throw new InputMismatchException("ï¿½Ã¹Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 					}
 					break;
 				} catch (InputMismatchException ex) {
@@ -569,17 +570,17 @@ public class Service {
 			switch (flag) {
 			case 1:
 				printCategory();
-				System.out.format("Ä«Å×°í¸® ÀÔ·Â : ");
+				System.out.format("Ä«ï¿½×°ï¿½ ï¿½Ô·ï¿½ : ");
 				categoryID = scan.nextInt();
 				scan.nextLine();
 				while (true) {
 					try {
-						System.out.format("\nÁ¤·Ä±âÁØ\n 1.º°Á¡¼ø 2.±âº»¼ø\n");
-						System.out.format("Á¤·Ä ±âÁØ ÀÔ·Â : ");
+						System.out.format("\nï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½\n 1.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 2.ï¿½âº»ï¿½ï¿½\n");
+						System.out.format("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ : ");
 						orderbyStar = scan.nextInt();
 						scan.nextLine();
 						if (orderbyStar != 1 && orderbyStar != 2) {
-							throw new InputMismatchException("¿Ã¹Ù¸¥ °ªÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+							throw new InputMismatchException("ï¿½Ã¹Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 						}
 						break;
 					} catch (InputMismatchException ex) {
@@ -594,16 +595,16 @@ public class Service {
 				}
 				break;
 			case 2:
-				System.out.format("µµ½Ã ÀÔ·Â (ex ¼ö¿ø½Ã, °¡Æò±º) : ");
+				System.out.format("ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ (ex ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½) : ");
 				city = scan.nextLine();
 				while (true) {
 					try {
-						System.out.format("\nÁ¤·Ä±âÁØ\n 1.º°Á¡¼ø 2.±âº»¼ø\n");
-						System.out.format("Á¤·Ä ±âÁØ ÀÔ·Â : ");
+						System.out.format("\nï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½\n 1.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 2.ï¿½âº»ï¿½ï¿½\n");
+						System.out.format("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ : ");
 						orderbyStar = scan.nextInt();
 						scan.nextLine();
 						if (flag != 1 && flag != 2) {
-							throw new InputMismatchException("¿Ã¹Ù¸¥ °ªÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+							throw new InputMismatchException("ï¿½Ã¹Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 						}
 						break;
 					} catch (InputMismatchException ex) {
@@ -617,20 +618,20 @@ public class Service {
 				}
 				break;
 			case 3:
-				System.out.format("µµ½Ã ÀÔ·Â (ex ¼ö¿ø½Ã, °¡Æò±º): ");
+				System.out.format("ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ (ex ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½): ");
 				city = scan.nextLine();
 				printCategory();
-				System.out.format("\nÄ«Å×°í¸® ÀÔ·Â : ");
+				System.out.format("\nÄ«ï¿½×°ï¿½ ï¿½Ô·ï¿½ : ");
 				categoryID = scan.nextInt();
 				scan.nextLine();
 				while (true) {
 					try {
-						System.out.format("\nÁ¤·Ä±âÁØ\n 1.º°Á¡¼ø 2.±âº»¼ø\n");
-						System.out.format("Á¤·Ä ±âÁØ ÀÔ·Â : ");
+						System.out.format("\nï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½\n 1.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 2.ï¿½âº»ï¿½ï¿½\n");
+						System.out.format("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ : ");
 						orderbyStar = scan.nextInt();
 						scan.nextLine();
 						if (orderbyStar != 1 && orderbyStar != 2) {
-							throw new InputMismatchException("¿Ã¹Ù¸¥ °ªÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+							throw new InputMismatchException("ï¿½Ã¹Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 						}
 						break;
 					} catch (InputMismatchException ex) {
@@ -644,16 +645,16 @@ public class Service {
 				}
 				break;
 			case 4:
-				System.out.format("Ãâ¹ß µµ½Ã : ");
+				System.out.format("ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ : ");
 				srcCity = scan.nextLine();
-				System.out.format("µµÂøµµ½Ã : ");
+				System.out.format("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ : ");
 				dstCity = scan.nextLine();
 				int categoryId;
 				int eachPlaceNum=0;
 				int totalPlaceNum = 0;
 				// while(true) {
 				// try {
-				System.out.format("\nÄÚ½º ³» ¿©ÇàÁö °³¼ö : \n");
+				System.out.format("\nï¿½Ú½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ : \n");
 				coursePlaceNum = scan.nextInt();
 				printCategory();
 
@@ -661,13 +662,13 @@ public class Service {
 					for(int i=0;i<coursePlaceNum;i+=eachPlaceNum) {
 						System.out.printf("<%d>\n",i+1);
 						try {
-							System.out.format("Ä«Å×°í¸®ID : ");
+							System.out.format("Ä«ï¿½×°ï¿½ID : ");
 							categoryId = scan.nextInt();
 							if (!checkCategory(categoryID)) {
-								throw new InputMismatchException("¾ø´Â Ä«Å×°í¸®");
+								throw new InputMismatchException("ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½×°ï¿½");
 							}
 
-							System.out.format("¿©ÇàÁö °³¼ö :");
+							System.out.format("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ :");
 							eachPlaceNum = scan.nextInt();
 							totalPlaceNum+=eachPlaceNum;
 							courseCriteria.add(new courseCriteriaObj(categoryId, eachPlaceNum));
@@ -677,7 +678,7 @@ public class Service {
 						}
 					}
 					if(totalPlaceNum!=coursePlaceNum) {
-						System.out.println("ÀÔ·ÂÇÏ½Å ¿©ÇàÁö °³¼ö°¡ »çÀü¿¡ ÀÔ·ÂÇÑ ¼öº¸´Ù Àû°Å³ª ¸¹½À´Ï´Ù. ´Ù½Ã ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+						System.out.println("ï¿½Ô·ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. ï¿½Ù½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 						courseCriteria.clear();
 						totalPlaceNum=0;
 					}
@@ -691,9 +692,9 @@ public class Service {
 					
 				
 				/*
-				 * System.out.format("Á¤·Ä ±âÁØ ÀÔ·Â : "); checkCategory = scan.nextInt();
+				 * System.out.format("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ : "); checkCategory = scan.nextInt();
 				 * scan.nextLine(); if(checkCategory!=1 && checkCategory!=2) { throw new
-				 * InputMismatchException("¿Ã¹Ù¸¥ °ªÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä."); } break;
+				 * InputMismatchException("ï¿½Ã¹Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½."); } break;
 				 */
 				// }
 				// catch(InputMismatchException ex){
@@ -702,18 +703,18 @@ public class Service {
 				// }
 				/*
 				 * if(checkCategory == 1) { System.out.println(""); printCategory();
-				 * System.out.format("Ä«Å×°í¸® ÀÔ·Â : "); categoryID = scan.nextInt();
+				 * System.out.format("Ä«ï¿½×°ï¿½ ï¿½Ô·ï¿½ : "); categoryID = scan.nextInt();
 				 * scan.nextLine(); readCoursePlace(srcCity, dstCity,true, categoryID); } else {
 				 */
 				readCoursePlace(srcCity, dstCity, coursePlaceNum, courseCriteria);
 				// }
 				break;
 			case 5:
-				System.out.format("°ü±¤Áö ¸í : ");
+				System.out.format("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ : ");
 				placeName = scan.nextLine();
-				System.out.format("µµ½Ã ¸í: ");
+				System.out.format("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½: ");
 				city = scan.nextLine();
-				System.out.format("º°Á¡(1~5) : ");
+				System.out.format("ï¿½ï¿½ï¿½ï¿½(1~5) : ");
 				star = scan.nextInt();
 				scan.nextLine();
 
@@ -721,7 +722,7 @@ public class Service {
 
 				break;
 			case 0:
-				System.out.println("ÀÌ¿ëÇØÁÖ¼Å¼­ °¨»çÇÕ´Ï´Ù.");
+				System.out.println("ï¿½Ì¿ï¿½ï¿½ï¿½ï¿½Ö¼Å¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
 				return;
 			}
 		}
