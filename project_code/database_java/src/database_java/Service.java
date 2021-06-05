@@ -346,102 +346,104 @@ public class Service {
 	}
 
 	public void readCoursePlace(String srcCity, String dstCity, int courcePlaceNum, ArrayList<courseCriteriaObj> courseCriteria) {
-		courseCriteria.forEach(item->System.out.println(item.categoryID + " " + item.num));
-		/*
-		 * int srcCityID=0,dstCityID=0;
-		 * 
-		 * float[] latitude = new float[2]; float[] longitude = new float[2]; float
-		 * centerLatitude=0,centerLongitude=0;
-		 * 
-		 * float city[][] = null; int cityNum =0; boolean checkDist[] = null;
-		 * 
-		 * ResultSet ret = null; ResultSetMetaData retMeta = null;
-		 * 
-		 * try {
-		 * 
-		 * srcCityID = checkCity(srcCity); if(srcCityID==-1) { throw new
-		 * InputMismatchException("출발 도시가 없는 도시입니다.") ; }
-		 * 
-		 * 
-		 * dstCityID = checkCity(dstCity); if(dstCityID==-1) { throw new
-		 * InputMismatchException("도착 도시가 없는 도시입니다.") ; }
-		 * 
-		 * 
-		 * ret = st.executeQuery("select latitude, longitude from city where cityid="
-		 * +dstCityID+" or cityid="+srcCityID+";"); int j = 0; while(ret.next()) {
-		 * latitude[j] = Float.parseFloat(ret.getString(1)); longitude[j++] =
-		 * Float.parseFloat(ret.getString(2));
-		 * 
-		 * 
-		 * }
-		 * 
-		 * ret = st.executeQuery("select count(*) from city;"); while(ret.next()) {
-		 * cityNum = Integer.parseInt(ret.getString(1)); city= new float[2][cityNum];
-		 * checkDist = new boolean[cityNum]; break; }
-		 * 
-		 * 
-		 * ret = st.executeQuery("select latitude, longitude from city;"); j = 0;
-		 * while(ret.next()) { city[0][j] = Float.parseFloat(ret.getString(1));
-		 * city[1][j++] = Float.parseFloat(ret.getString(2)); } centerLatitude =
-		 * (latitude[0]+latitude[1])/2; centerLongitude = (longitude[0]+longitude[1])/2;
-		 * 
-		 * st.execute("drop extension if exists postgis;");
-		 * st.execute("create extension postgis;"); /*if(checkCategory) {
-		 * if(!checkCategory(categoryID)) { throw new InputMismatchException("없는 카테고리");
-		 * }
-		 * 
-		 * ret = st.executeQuery("select placename, number, address, count, star\r\n" +
-		 * "from(\r\n" +
-		 * "select placeid,categoryid,category,placename,number,address,count,star \r\n"
-		 * +
-		 * "from place natural join category natural join city natural join (select customerid,placeid,count(star), round(avg(star)::numeric, 1) as star\r\n"
-		 * + "from star\r\n" + "group by rollup(placeid,customerid))as S\r\n" +
-		 * "where customerid is null and ST_DistanceSphere(\r\n" +
-		 * "    	ST_GeomFromText('POINT("+centerLongitude+" "
-		 * +centerLatitude+")', 4326),\r\n" +
-		 * "        ST_MakePoint(longitude, latitude, 4326)\r\n" +
-		 * "    )/1000 <= (ST_DistanceSphere(ST_MakePoint("+longitude[0]+","+latitude[0]
-		 * +",4326), ST_MakePoint("+longitude[1]+","+latitude[1]+",4326))/2000)"+"\r\n"
-		 * + "union\r\n" +
-		 * "select placeid,categoryid,category,placename,number,address,0,0\r\n" +
-		 * "from place natural join category natural join city\r\n" +
-		 * "where placeid not in(select placeid from star) and ST_DistanceSphere(\r\n" +
-		 * "    	ST_GeomFromText('POINT("+centerLongitude+" "
-		 * +centerLatitude+")', 4326),\r\n" +
-		 * "        ST_MakePoint(longitude, latitude, 4326)\r\n" +
-		 * "    )/1000 <= (ST_DistanceSphere(ST_MakePoint("+longitude[0]+","+latitude[0]
-		 * +",4326), ST_MakePoint("+longitude[1]+","+latitude[1]+",4326))/2000)\r\n" +
-		 * ") as S natural join placeLocation where categoryid="+categoryID+";"); } else
-		 * { ret =
-		 * st.executeQuery("select category, placename, number, address,count, star\r\n"
-		 * + "from(\r\n" +
-		 * "select placeid,categoryid,category,placename,number,address,count,star \r\n"
-		 * +
-		 * "from place natural join category natural join city natural join (select customerid,placeid,count(star), round(avg(star)::numeric, 1) as star\r\n"
-		 * + "from star\r\n" + "group by rollup(placeid,customerid))as S\r\n" +
-		 * "where customerid is null and ST_DistanceSphere(\r\n" +
-		 * "    	ST_GeomFromText('POINT("+centerLongitude+" "
-		 * +centerLatitude+")', 4326),\r\n" +
-		 * "        ST_MakePoint(longitude, latitude, 4326)\r\n" +
-		 * "    )/1000 <= (ST_DistanceSphere(ST_MakePoint("+longitude[0]+","+latitude[0]
-		 * +",4326), ST_MakePoint("+longitude[1]+","+latitude[1]+",4326))/2000)"+"\r\n"
-		 * + "union\r\n" +
-		 * "select placeid,categoryid,category,placename,number,address,0,0\r\n" +
-		 * "from place natural join category natural join city\r\n" +
-		 * "where placeid not in(select placeid from star) and ST_DistanceSphere(\r\n" +
-		 * "    	ST_GeomFromText('POINT("+centerLongitude+" "
-		 * +centerLatitude+")', 4326),\r\n" +
-		 * "        ST_MakePoint(longitude, latitude, 4326)\r\n" +
-		 * "    )/1000 <= (ST_DistanceSphere(ST_MakePoint("+longitude[0]+","+latitude[0]
-		 * +",4326), ST_MakePoint("+longitude[1]+","+latitude[1]+",4326))/2000)\r\n" +
-		 * ") as S natural join placeLocation;"); //}
-		 * 
-		 * retMeta = ret.getMetaData(); printTable(ret,retMeta);
-		 * 
-		 * } catch(SQLException ex) { System.out.println(ex); }
-		 * catch(InputMismatchException ex) { System.out.println(ex); }
-		 */
+		int srcCityID=0,dstCityID=0;
+		int cate =0, cnum = 0;
 
+		float[] latitude = new float[2];
+		float[] longitude = new float[2];
+		float centerLatitude=0,centerLongitude=0;
+
+		String q = "";	
+		float city[][] = null;
+		int cityNum =0;
+		boolean checkDist[] = null;
+
+		ResultSet ret = null;
+		ResultSetMetaData retMeta = null;
+		  
+		  try {
+		  
+		  srcCityID = checkCity(srcCity); if(srcCityID==-1) { throw new
+		  InputMismatchException("출발 도시가 없는 도시입니다.") ; }
+		  
+		  
+		  dstCityID = checkCity(dstCity); if(dstCityID==-1) { throw new
+		  InputMismatchException("도착 도시가 없는 도시입니다.") ; }
+		  
+		  ret = st.executeQuery("select latitude, longitude from city where cityid=" +dstCityID+" or cityid="+srcCityID+";");
+			int j = 0;
+			while(ret.next()) {
+				latitude[j] = Float.parseFloat(ret.getString(1));
+				longitude[j++] = Float.parseFloat(ret.getString(2));
+
+
+			}
+
+			ret = st.executeQuery("select count(*) from city;");
+			while(ret.next()) {
+				cityNum = Integer.parseInt(ret.getString(1));
+				city= new float[2][cityNum];
+				checkDist = new boolean[cityNum];
+				break;
+			}
+
+		  
+
+			ret = st.executeQuery("select latitude, longitude from city;");
+			j = 0;
+			while(ret.next()) {
+				city[0][j] = Float.parseFloat(ret.getString(1));
+				city[1][j++] = Float.parseFloat(ret.getString(2));
+			}
+
+			centerLatitude = (latitude[0]+latitude[1])/2;
+			centerLongitude = (longitude[0]+longitude[1])/2;
+			st.execute("drop view if exists course;");
+			st.execute("drop extension if exists postgis;");
+			st.execute("create extension postgis;");
+			
+			q = "create view course as \r\n"
+					+ "select categoryid, category, placename, number, address, star\r\n"
+					+ "from(\r\n"
+					+ "select placeid,categoryid,category,placename,number,address,count,star \r\n"
+					+ "from place natural join category natural join city natural join (select customerid,placeid,count(star), round(avg(star)::numeric, 1) as star\r\n"
+					+ "from star\r\n"
+					+ "group by rollup(placeid,customerid))as S\r\n"
+					+ "where customerid is null and ST_DistanceSphere(\r\n"
+					+ "    	ST_GeomFromText('POINT("+centerLongitude+" "+centerLatitude+")', 4326),\r\n"
+					+ "        ST_MakePoint(longitude, latitude, 4326)\r\n"
+					+ "    )/1000 < (ST_DistanceSphere(ST_MakePoint("+longitude[0]+","+latitude[0]+",4326), ST_MakePoint("+longitude[1]+","+latitude[1]+",4326))/2000)"+"\r\n"
+					+ "union\r\n"
+					+ "select placeid,categoryid,category,placename,number,address,0,0\r\n"
+					+ "from place natural join category natural join city\r\n"
+					+ "where placeid not in(select placeid from star) and ST_DistanceSphere(\r\n"
+					+ "    	ST_GeomFromText('POINT("+centerLongitude+" "+centerLatitude+")', 4326),\r\n"
+					+ "        ST_MakePoint(longitude, latitude, 4326)\r\n"
+					+ "    )/1000 < (ST_DistanceSphere(ST_MakePoint("+longitude[0]+","+latitude[0]+",4326), ST_MakePoint("+longitude[1]+","+latitude[1]+",4326))/2000)\r\n"
+					+ ") as S natural join placeLocation;";
+			st.execute(q);
+			
+					
+			for(courseCriteriaObj item:courseCriteria) {
+					cate = item.categoryID;
+					cnum = item.num;
+					
+					ret = st.executeQuery("select category, placename, number, address, star from course where categoryid = '"+cate+"'"
+							+ "order by star LIMIT " +cnum +";");
+					retMeta = ret.getMetaData();
+					printTable(ret, retMeta);
+					
+			}
+				
+				
+
+		}
+		catch(SQLException ex) {
+			System.out.println(ex);
+		}
+		catch(InputMismatchException ex) {
+			System.out.println(ex);
+		}
 	}
 
 	public void updateStar(String city, String place, int star) {
@@ -647,7 +649,7 @@ public class Service {
 				System.out.format("도착도시 : ");
 				dstCity = scan.nextLine();
 				int categoryId;
-				int eachPlaceNum;
+				int eachPlaceNum=0;
 				int totalPlaceNum = 0;
 				// while(true) {
 				// try {
@@ -656,7 +658,7 @@ public class Service {
 				printCategory();
 
 				while (true) {
-					for(int i=0;i<coursePlaceNum;i++) {
+					for(int i=0;i<coursePlaceNum;i+=eachPlaceNum) {
 						System.out.printf("<%d>\n",i+1);
 						try {
 							System.out.format("카테고리ID : ");
