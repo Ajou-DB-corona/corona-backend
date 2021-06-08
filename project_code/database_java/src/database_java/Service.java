@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.nio.file.Files;
+ 
 
 class courseCriteriaObj {
 	int categoryID;
@@ -24,7 +25,8 @@ public class Service {
 	private User user = null;
 	private Connection conn = null;
 	private Statement st = null;
-
+	wcwidth Wcwidth = new wcwidth();
+	
 	public Service() {
 		String categoryPath = "./table/Category.csv";
 		String cityPath = "./table/City.csv";
@@ -472,7 +474,7 @@ public class Service {
 			while (ret.next()) {
 				int tmp = Integer.parseInt(ret.getString(1));
 				if (tmp == 0) {
-					throw new InputMismatchException("없는 관광지");
+					throw new InputMismatchException("없는 여행지");
 				}
 
 				ret = st.executeQuery(
@@ -508,18 +510,26 @@ public class Service {
 		System.out.format("     ");
 		for (int i = 0; i < count; i++) {
 			columns[i] = retMeta.getColumnLabel(i + 1);
-			System.out.format("%-60s", columns[i]);
+			System.out.format("%-37s", columns[i]);
 		}
-		System.out.println("");
+		System.out.println("\n-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 		while (ret.next()) {
 			System.out.format("%-5s", j++);
 			for (int i = 0; i < count; i++) {
-				System.out.format("%-60s", ret.getString(i + 1));
+				System.out.format("%-35s", ret.getString(i + 1));
 			}
 			System.out.println("");
 		}
 	}
-
+	/*public String fmt(String x, int w) {
+		
+		int l=Wcwidth.wcwidth(x);
+		int s=w-l;
+		String blank = " ";
+		String output = x.concat(blank.repeat(s));
+		return output;		
+		
+	}*/
 	public void printCategory() {
 		ResultSet ret = null;
 		ResultSetMetaData retMeta = null;
@@ -553,7 +563,7 @@ public class Service {
 		while (true) {
 			while (true) {
 				System.out.format(
-						"1.카테고리별 관광지 조회\n2.도시별 관광지 조회\n3.카테고리 및 도시별 관광지 조회\n4.두 도시 이동 간의 추천 관광지\n5.후기 남기기\n0.종료\n");
+						"1.카테고리별 여행지 조회\n2.도시별 여행지 조회\n3.카테고리 및 도시별 여행지 조회\n4.두 도시 이동 간의 추천 여행지\n5.후기 남기기\n0.종료\n");
 				try {
 					System.out.format("입력 : ");
 					flag = scan.nextInt();
@@ -699,7 +709,7 @@ public class Service {
 				
 				break;
 			case 5:
-				System.out.format("관광지 명 : ");
+				System.out.format("여행지 명 : ");
 				placeName = scan.nextLine();
 				System.out.format("도시 명: ");
 				city = scan.nextLine();
