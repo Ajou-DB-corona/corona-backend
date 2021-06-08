@@ -39,12 +39,12 @@ public class Service {
 		Scanner scan = new Scanner(System.in);
 		String userID = null;
 
-		System.out.format("userID �Է� : ");
+		System.out.format("userID 입력 : ");
 		userID = scan.next();
 		scan.nextLine();
 
 		this.user = new User(new String(userID));
-		System.out.format("%s�� ȯ���մϴ�!\n\n", user.getUserID());
+		System.out.format("%s님 환영합니다!\n\n", user.getUserID());
 		// crate table or read table
 		try {
 			conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/postgres", "postgres", "0000");
@@ -221,7 +221,7 @@ public class Service {
 		try {
 
 			if (!checkCategory(categoryID)) {
-				throw new InputMismatchException("���� ī�װ�");
+				throw new InputMismatchException("없는 카테고리");
 			}
 
 			if (orderbyStar) {
@@ -264,7 +264,7 @@ public class Service {
 		try {
 			cityID = checkCity(city);
 			if (cityID == -1) {
-				throw new InputMismatchException("���� ����.");
+				throw new InputMismatchException("없는 도시.");
 			}
 
 			if (orderbyStar) {
@@ -306,11 +306,11 @@ public class Service {
 		try {
 			cityID = checkCity(city);
 			if (cityID == -1) {
-				throw new InputMismatchException("���� ����.");
+				throw new InputMismatchException("없는 도시.");
 			}
 
 			if (!checkCategory(categoryID)) {
-				throw new InputMismatchException("���� ī�װ�");
+				throw new InputMismatchException("없는 카테고리");
 			}
 
 			if (orderbyStar) {
@@ -364,11 +364,11 @@ public class Service {
 		  try {
 		  
 		  srcCityID = checkCity(srcCity); if(srcCityID==-1) { throw new
-		  InputMismatchException("��� ���ð� ���� �����Դϴ�.") ; }
+		  InputMismatchException("존재하지 않는 출발 도시입니다.") ; }
 		  
 		  
 		  dstCityID = checkCity(dstCity); if(dstCityID==-1) { throw new
-		  InputMismatchException("���� ���ð� ���� �����Դϴ�.") ; }
+		  InputMismatchException("존재하지 않는 도착 도시입니다.") ; }
 		  
 		  ret = st.executeQuery("select latitude, longitude from city where cityid=" +dstCityID+" or cityid="+srcCityID+";");
 			int j = 0;
@@ -423,13 +423,13 @@ public class Service {
 					+ ") as S natural join placeLocation;";
 			st.execute(q);
 			
-					for (int x =0; x<5;x++) {						
+					for (int x =0; x<5;x++) {							
 						for(courseCriteriaObj item:courseCriteria) {
 							cate = item.categoryID;
 							cnum = item.num;
 							
 							ret = st.executeQuery("select category, placename, number, address, star from course where categoryid = '"+cate+"'"
-									+ "order by star LIMIT " +cnum * (i+1) +"offset"+ cnum * i +";");
+									+ "order by star LIMIT " +cnum +"offset "+ cnum * x +";");
 							retMeta = ret.getMetaData();
 							printTable(ret, retMeta);
 							
@@ -454,13 +454,13 @@ public class Service {
 		int placeID = 0;
 		try {
 			if (star < 0 || star > 5) {
-				throw new InputMismatchException("1~5�� ���� �Է�!");
+				throw new InputMismatchException("1~5점 사이 입력!");
 			}
 			ret = st.executeQuery("select count(*) from city where city='" + city + "';");
 			while (ret.next()) {
 				int tmp = Integer.parseInt(ret.getString(1));
 				if (tmp == 0) {
-					throw new InputMismatchException("���� ����.");
+					throw new InputMismatchException("없는 도시.");
 				}
 				ret = st.executeQuery("select cityID from city where city='" + city + "';");
 				ret.next();
@@ -472,7 +472,7 @@ public class Service {
 			while (ret.next()) {
 				int tmp = Integer.parseInt(ret.getString(1));
 				if (tmp == 0) {
-					throw new InputMismatchException("���� ������");
+					throw new InputMismatchException("없는 관광지");
 				}
 
 				ret = st.executeQuery(
@@ -553,13 +553,13 @@ public class Service {
 		while (true) {
 			while (true) {
 				System.out.format(
-						"1.ī�װ��� ������ ��ȸ\n2.���ú� ������ ��ȸ\n3.ī�װ� �� ���ú� ������ ��ȸ\n4.�� ���� �̵� ���� ��õ ������\n5.�ı� �����\n0.����\n");
+						"1.카테고리별 관광지 조회\n2.도시별 관광지 조회\n3.카테고리 및 도시별 관광지 조회\n4.두 도시 이동 간의 추천 관광지\n5.후기 남기기\n0.종료\n");
 				try {
-					System.out.format("�Է� : ");
+					System.out.format("입력 : ");
 					flag = scan.nextInt();
 					scan.nextLine();
 					if (flag < 0 || flag > 5) {
-						throw new InputMismatchException("�ùٸ� ���� �Է����ּ���.");
+						throw new InputMismatchException("올바른 값을 입력해주세요.");
 					}
 					break;
 				} catch (InputMismatchException ex) {
@@ -570,17 +570,17 @@ public class Service {
 			switch (flag) {
 			case 1:
 				printCategory();
-				System.out.format("ī�װ� �Է� : ");
+				System.out.format("카테고리 입력 : ");
 				categoryID = scan.nextInt();
 				scan.nextLine();
 				while (true) {
 					try {
-						System.out.format("\n���ı���\n 1.������ 2.�⺻��\n");
-						System.out.format("���� ���� �Է� : ");
+						System.out.format("\n정렬기준\n 1.별점순 2.기본순\n");
+						System.out.format("정렬 기준 입력 : ");
 						orderbyStar = scan.nextInt();
 						scan.nextLine();
 						if (orderbyStar != 1 && orderbyStar != 2) {
-							throw new InputMismatchException("�ùٸ� ���� �Է����ּ���.");
+							throw new InputMismatchException("올바른 값을 입력해주세요.");
 						}
 						break;
 					} catch (InputMismatchException ex) {
@@ -595,16 +595,16 @@ public class Service {
 				}
 				break;
 			case 2:
-				System.out.format("���� �Է� (ex ������, ����) : ");
+				System.out.format("도시 입력 (ex 수원시, 가평군) : ");
 				city = scan.nextLine();
 				while (true) {
 					try {
-						System.out.format("\n���ı���\n 1.������ 2.�⺻��\n");
-						System.out.format("���� ���� �Է� : ");
+						System.out.format("\n정렬기준\n 1.별점순 2.기본순\n");
+						System.out.format("정렬 기준 입력 : ");
 						orderbyStar = scan.nextInt();
 						scan.nextLine();
 						if (flag != 1 && flag != 2) {
-							throw new InputMismatchException("�ùٸ� ���� �Է����ּ���.");
+							throw new InputMismatchException("올바른 값을 입력해주세요.");
 						}
 						break;
 					} catch (InputMismatchException ex) {
@@ -618,20 +618,20 @@ public class Service {
 				}
 				break;
 			case 3:
-				System.out.format("���� �Է� (ex ������, ����): ");
+				System.out.format("도시 입력 (ex 수원시, 가평군) : ");
 				city = scan.nextLine();
 				printCategory();
-				System.out.format("\nī�װ� �Է� : ");
+				System.out.format("\n카테고리 입력 : ");
 				categoryID = scan.nextInt();
 				scan.nextLine();
 				while (true) {
 					try {
-						System.out.format("\n���ı���\n 1.������ 2.�⺻��\n");
-						System.out.format("���� ���� �Է� : ");
+						System.out.format("\n정렬기준\n 1.별점순 2.기본순\n");
+						System.out.format("정렬 기준 입력 : ");
 						orderbyStar = scan.nextInt();
 						scan.nextLine();
 						if (orderbyStar != 1 && orderbyStar != 2) {
-							throw new InputMismatchException("�ùٸ� ���� �Է����ּ���.");
+							throw new InputMismatchException("올바른 값을 입력해주세요.");
 						}
 						break;
 					} catch (InputMismatchException ex) {
@@ -645,40 +645,45 @@ public class Service {
 				}
 				break;
 			case 4:
-				System.out.format("��� ���� : ");
+				System.out.format("출발 도시 : ");
 				srcCity = scan.nextLine();
-				System.out.format("�������� : ");
+				System.out.format("도착 도시 : ");
 				dstCity = scan.nextLine();
 				int categoryId;
 				int eachPlaceNum=0;
 				int totalPlaceNum = 0;
+				int cnt=1;
 				// while(true) {
 				// try {
-				System.out.format("\n�ڽ� �� ������ ���� : \n");
+				System.out.format("\n코스 내 여행지 개수 : \n");
 				coursePlaceNum = scan.nextInt();
 				printCategory();
 
 				while (true) {
 					for(int i=0;i<coursePlaceNum;i+=eachPlaceNum) {
-						System.out.printf("<%d>\n",i+1);
+						System.out.printf("<%d>\n",cnt);
 						try {
-							System.out.format("ī�װ�ID : ");
+							System.out.format("카테고리ID : ");
 							categoryId = scan.nextInt();
-							if (!checkCategory(categoryID)) {
-								throw new InputMismatchException("���� ī�װ�");
+							if (!checkCategory(categoryId)) {
+								throw new InputMismatchException("없는 카테고리");
 							}
 
-							System.out.format("������ ���� :");
+							System.out.format("여행지 개수 : ");
 							eachPlaceNum = scan.nextInt();
 							totalPlaceNum+=eachPlaceNum;
 							courseCriteria.add(new courseCriteriaObj(categoryId, eachPlaceNum));
+							cnt++;
 						}
-						catch (SQLException ex) {
+						catch (InputMismatchException ex) {
+							System.out.println(ex);
+						} catch (SQLException ex) {
 							System.out.println(ex);
 						}
 					}
 					if(totalPlaceNum!=coursePlaceNum) {
-						System.out.println("�Է��Ͻ� ������ ������ ������ �Է��� ������ ���ų� �����ϴ�. �ٽ� �Է����ּ���.");
+						cnt--;
+						System.out.println("입력하신 여행지 개수가 사전에 입력한 수보다 적거나 많습니다. 다시 입력해주세요.");
 						courseCriteria.clear();
 						totalPlaceNum=0;
 					}
@@ -689,32 +694,16 @@ public class Service {
 					}
 				}
 
-					
-				
-				/*
-				 * System.out.format("���� ���� �Է� : "); checkCategory = scan.nextInt();
-				 * scan.nextLine(); if(checkCategory!=1 && checkCategory!=2) { throw new
-				 * InputMismatchException("�ùٸ� ���� �Է����ּ���."); } break;
-				 */
-				// }
-				// catch(InputMismatchException ex){
-				// System.out.println(ex);
-				// }
-				// }
-				/*
-				 * if(checkCategory == 1) { System.out.println(""); printCategory();
-				 * System.out.format("ī�װ� �Է� : "); categoryID = scan.nextInt();
-				 * scan.nextLine(); readCoursePlace(srcCity, dstCity,true, categoryID); } else {
-				 */
+				cnt=0;
 				readCoursePlace(srcCity, dstCity, coursePlaceNum, courseCriteria);
-				// }
+				
 				break;
 			case 5:
-				System.out.format("������ �� : ");
+				System.out.format("관광지 명 : ");
 				placeName = scan.nextLine();
-				System.out.format("���� ��: ");
+				System.out.format("도시 명: ");
 				city = scan.nextLine();
-				System.out.format("����(1~5) : ");
+				System.out.format("별점 (1~5) : ");
 				star = scan.nextInt();
 				scan.nextLine();
 
@@ -722,7 +711,7 @@ public class Service {
 
 				break;
 			case 0:
-				System.out.println("�̿����ּż� �����մϴ�.");
+				System.out.println("이용해주셔서 감사합니다.");
 				return;
 			}
 		}
