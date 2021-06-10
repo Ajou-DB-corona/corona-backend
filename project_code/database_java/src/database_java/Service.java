@@ -404,6 +404,8 @@ public class Service {
 			st.execute("drop extension if exists postgis;");
 			st.execute("create extension postgis;");
 			
+			System.out.println(centerLatitude);
+			System.out.println(centerLongitude);
 			q = "create view course as \r\n"
 					+ "select categoryid, category, placename, number, address, star\r\n"
 					+ "from(\r\n"
@@ -424,19 +426,25 @@ public class Service {
 					+ "    )/1000 < (ST_DistanceSphere(ST_MakePoint("+longitude[0]+","+latitude[0]+",4326), ST_MakePoint("+longitude[1]+","+latitude[1]+",4326))/2000)\r\n"
 					+ ") as S natural join placeLocation;";
 			st.execute(q);
+		
+			int [] arr = new int[8];
 			
-					for (int x =0; x<5;x++) {							
-						for(courseCriteriaObj item:courseCriteria) {
-							cate = item.categoryID;
-							cnum = item.num;
-							
-							ret = st.executeQuery("select category, placename, number, address, star from course where categoryid = '"+cate+"'"
-									+ "order by star LIMIT " +cnum +"offset "+ cnum * x +";");
-							retMeta = ret.getMetaData();
-							printTable(ret, retMeta);
-							
-						}
-					}
+			for (int x =0; x<5;x++) {			
+				System.out.printf("<코스 %d>*************************************************************************************************************\n", x+1);
+				
+				for(courseCriteriaObj item:courseCriteria) {
+					
+					cate = item.categoryID;
+					cnum = item.num;
+					ret = st.executeQuery("select category, placename, number, address, star from course where categoryid = '"+cate+"'"
+							+ "order by star desc, number LIMIT " +cnum +"offset "+ arr[item.categoryID] +";");
+					retMeta = ret.getMetaData();
+					printTable(ret, retMeta);
+					arr[item.categoryID]=cnum+arr[item.categoryID];
+					
+					
+				}
+			}
 				
 				
 
@@ -520,6 +528,8 @@ public class Service {
 			}
 			System.out.println("");
 		}
+		System.out.println("\n-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+		
 	}
 	/*public String fmt(String x, int w) {
 		
@@ -563,7 +573,7 @@ public class Service {
 		while (true) {
 			while (true) {
 				System.out.format(
-						"1.카테고리별 여행지 조회\n2.도시별 여행지 조회\n3.카테고리 및 도시별 여행지 조회\n4.두 도시 이동 간의 추천 여행지\n5.후기 남기기\n0.종료\n");
+						"1.카테고리별 여행지 조회\n2.도시별 여행지 조회\n3.카테고리 및 도시별 여행지 조회\n4.두 도시 이동 간의 추천 여행지\n5.별점 남기기\n0.종료\n");
 				try {
 					System.out.format("입력 : ");
 					flag = scan.nextInt();
@@ -699,15 +709,15 @@ public class Service {
 					}
 					else {
 						readCoursePlace(srcCity, dstCity, coursePlaceNum, courseCriteria);
+					
 						courseCriteria.clear();
 						break;
 					}
 				}
 
 				cnt=0;
-				readCoursePlace(srcCity, dstCity, coursePlaceNum, courseCriteria);
-				
 				break;
+				
 			case 5:
 				System.out.format("여행지 명 : ");
 				placeName = scan.nextLine();
