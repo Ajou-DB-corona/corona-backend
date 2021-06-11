@@ -25,7 +25,6 @@ public class Service {
 	private User user = null;
 	private Connection conn = null;
 	private Statement st = null;
-	wcwidth Wcwidth = new wcwidth();
 	
 	public Service() {
 		String categoryPath = "./table/Category.csv";
@@ -404,8 +403,6 @@ public class Service {
 			st.execute("drop extension if exists postgis;");
 			st.execute("create extension postgis;");
 			
-			System.out.println(centerLatitude);
-			System.out.println(centerLongitude);
 			q = "create view course as \r\n"
 					+ "select categoryid, category, placename, number, address, star\r\n"
 					+ "from(\r\n"
@@ -512,6 +509,7 @@ public class Service {
 	public void printTable(ResultSet ret, ResultSetMetaData retMeta) throws SQLException {
 		int count = 0;
 		int j = 1;
+		boolean noInfo=true;
 		String[] columns = null;
 		count = retMeta.getColumnCount();
 		columns = new String[count];
@@ -520,34 +518,30 @@ public class Service {
 			columns[i] = retMeta.getColumnLabel(i + 1);
 			System.out.format("%-37s", columns[i]);
 		}
+		
 		System.out.println("\n-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+		
 		while (ret.next()) {
+			noInfo=false;
 			System.out.format("%-5s", j++);
 			for (int i = 0; i < count; i++) {
 				System.out.format("%-35s", ret.getString(i + 1));
 			}
 			System.out.println("");
 		}
+		if(noInfo==true) System.out.println("정보가 없습니다.");
 		System.out.println("\n-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
-		
-	}
-	/*public String fmt(String x, int w) {
-		
-		int l=Wcwidth.wcwidth(x);
-		int s=w-l;
-		String blank = " ";
-		String output = x.concat(blank.repeat(s));
-		return output;		
-		
-	}*/
+		}
+	
 	public void printCategory() {
 		ResultSet ret = null;
 		ResultSetMetaData retMeta = null;
 
 		try {
 			ret = st.executeQuery("select * from category;");
-
+			int cnt=0;
 			while (ret.next()) {
+				
 				System.out.format("%s.%s\n", ret.getString(1), ret.getString(2));
 			}
 
@@ -673,8 +667,6 @@ public class Service {
 				int eachPlaceNum=0;
 				int totalPlaceNum = 0;
 				int cnt=1;
-				// while(true) {
-				// try {
 				System.out.format("\n코스 내 여행지 개수 : \n");
 				coursePlaceNum = scan.nextInt();
 				printCategory();
@@ -702,7 +694,7 @@ public class Service {
 						}
 					}
 					if(totalPlaceNum!=coursePlaceNum) {
-						cnt--;
+						cnt=1;
 						System.out.println("입력하신 여행지 개수가 사전에 입력한 수보다 적거나 많습니다. 다시 입력해주세요.");
 						courseCriteria.clear();
 						totalPlaceNum=0;
@@ -714,8 +706,9 @@ public class Service {
 						break;
 					}
 				}
-
-				cnt=0;
+				eachPlaceNum=0;
+				totalPlaceNum=0;
+				cnt=1;
 				break;
 				
 			case 5:
